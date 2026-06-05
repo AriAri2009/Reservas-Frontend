@@ -1,0 +1,17 @@
+[project]
+name = "reservas-frontend"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Arianna",email = "ariannacedenob@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14,<4.0"
+dependencies = [
+    "reflex (>=0.9.4,<0.10.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
