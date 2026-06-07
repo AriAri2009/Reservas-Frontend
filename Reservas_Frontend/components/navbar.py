@@ -15,17 +15,25 @@ def navbar_buttons() -> rx.Component:
                         height="3em",
                         border_radius="25%",
                     ),
-
                 ),
                 rx.hstack(
-                    navbar_link("Inicio", "/#"),
-                    navbar_link("Descripciones", "/#"),
-                    navbar_link("Reservas", "/#"),
-                    navbar_link("Contacto", "/#"),
+                    navbar_link("Inicio", "/"),
+                    navbar_link("Descripciones", "/descripcion"),
+                    navbar_link("Reservas", "/reservas"),
                     spacing="5",
                 ),
                 rx.hstack(
-                    rx.button("Log in", size="3", variant="outline", bg = "#e6a950", color = "#ffffff", border_radius="15px"),
+                    rx.link(
+                        rx.button(
+                            "Log in", 
+                            size="3", 
+                            variant="outline", 
+                            bg="#e6a950", 
+                            color="#ffffff", 
+                            border_radius="15px"
+                        ),
+                        href="/admin_login"
+                    ),
                     spacing="4",
                     justify="end",
                 ),
@@ -46,14 +54,13 @@ def navbar_buttons() -> rx.Component:
                     align_items="center",
                 ),
                 rx.menu.root(
-                    rx.menu.trigger(rx.icon("menu", size=30, color = "white")),
+                    rx.menu.trigger(rx.icon("menu", size=30, color="white")),
                     rx.menu.content(
-                        rx.menu.item("Inicio"),
-                        rx.menu.item("Descripciones"),
-                        rx.menu.item("Reservas"),
-                        rx.menu.item("Contacto"),
+                        rx.menu.item("Inicio", on_click=rx.redirect("/")),
+                        rx.menu.item("Descripciones", on_click=rx.redirect("/descripcion")),
+                        rx.menu.item("Reservas", on_click=rx.redirect("/reservas")),
                         rx.menu.separator(),
-                        rx.menu.item("Log in"),
+                        rx.menu.item("Log in", on_click=rx.redirect("/admin_login")),
                     ),
                     justify="end",
                 ),
@@ -61,10 +68,7 @@ def navbar_buttons() -> rx.Component:
                 align_items="center",
             ),
         ),
-        bg= "#f5f0e9",
+        bg="#f5f0e9",
         padding="1em",
-        # position="fixed",
-        # top="0px",
-        # z_index="5",
         width="100%",
     )

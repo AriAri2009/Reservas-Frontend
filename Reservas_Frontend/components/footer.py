@@ -55,7 +55,7 @@ def footer() -> rx.Component:
                     rx.hstack(
                         rx.image(
                             src="LogoChillP.png",
-                            width="3em",
+                            width="3.25em",
                             height="auto",
                             border_radius="25%",
                         ),
