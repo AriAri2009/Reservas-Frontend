@@ -3,6 +3,8 @@
 import reflex as rx
 
 from rxconfig import config
+from Reservas_Frontend.components.navbar import navbar_buttons
+from Reservas_Frontend.components.footer import footer
 
 
 class State(rx.State):
@@ -11,26 +13,19 @@ class State(rx.State):
 
 def index() -> rx.Component:
     # Welcome Page (Index)
-    return rx.container(
+    return rx.box(
         rx.color_mode.button(position="top-right"),
         rx.vstack(
-            rx.heading("Welcome to Reflex!", size="9"),
-            rx.text(
-                "Get started by editing ",
-                rx.code(f"{config.app_name}/{config.app_name}.py"),
-                size="5",
-            ),
-            rx.link(
-                rx.button("Check out our docs!"),
-                href="https://reflex.dev/docs/getting-started/introduction/",
-                is_external=True,
-            ),
-            spacing="5",
-            justify="center",
-            min_height="85vh",
+            navbar_buttons(),
+            footer()
         ),
+        width="100%",
     )
 
 
-app = rx.App()
+app = rx.App(
+    stylesheets=[
+        "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap",
+    ],
+)
 app.add_page(index)
