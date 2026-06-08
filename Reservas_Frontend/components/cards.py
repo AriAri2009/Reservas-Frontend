@@ -32,7 +32,7 @@ def cards(imagen_url: str, titulo_destino: str, precio_destino: str, descripcion
                 margin_top="2"
             ),
             
-            # 3. Botón de Acción con Enlace directo a descripciones
+         
             rx.link(
                 rx.button(
                     "Ver Detalles →", 
@@ -41,11 +41,11 @@ def cards(imagen_url: str, titulo_destino: str, precio_destino: str, descripcion
                     color="white", 
                     width="100%",
                     cursor="pointer",
-                    _hover={"bg": "#f3a56a"}  # Efecto sutil al pasar el mouse
+                    _hover={"bg": "#f3a56a"}  
                 ),
-                href="/descripcion",  # Redirecciona a pages/descripcion.py
+                href="/descripcion",  
                 width="100%",
-                margin_top="auto"     # Empuja el botón al fondo si los textos varían de tamaño
+                margin_top="auto"    
             ),
             
             align_items="start",
@@ -62,7 +62,9 @@ def cards(imagen_url: str, titulo_destino: str, precio_destino: str, descripcion
         width="100%",
         transition="transform 0.2s ease, box_shadow 0.2s ease",
         _hover={
-            "transform": "translateY(-4px)", # Pequeña animación flotante al pasar el mouse
+            "transform": "translateY(-4px)", 
             "box_shadow": "lg"
         }
     )
+    
+    

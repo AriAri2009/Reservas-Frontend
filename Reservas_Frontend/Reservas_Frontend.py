@@ -6,7 +6,7 @@ from rxconfig import config
 from Reservas_Frontend.components.navbar import navbar_buttons
 from Reservas_Frontend.components.footer import footer
 from Reservas_Frontend.components.cards import cards
-
+from Reservas_Frontend.components.search import search_form
 
 class State(rx.State):
     """The app state."""
@@ -100,6 +100,19 @@ def index() -> rx.Component:
         rx.vstack(
             navbar_buttons(),
             hero_section(),
+            
+            rx.box(
+                search_form(),
+                width="100%",
+                display="flex",
+                justify_content="center",
+                margin_top="-50px",
+                z_index="10",
+                position="relative",
+            ),
+            
+            rx.box(height="40px", bg="#f5f0e9"),
+            
             offers_section(),
             footer(),
             
