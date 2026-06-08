@@ -8,6 +8,7 @@ def form_field(label: str, placeholder: str, type: str, name: str) -> rx.Compone
             weight="medium",
             color="#4a5568",
             font_family="Inter",
+            margin_bottom="2",
         ),
         rx.input(
             placeholder=placeholder,
@@ -18,6 +19,7 @@ def form_field(label: str, placeholder: str, type: str, name: str) -> rx.Compone
             border_radius="12px",
             padding_y="1.5em",
             width="100%",
+            margin_top="1",
         ),
         spacing="1",
         width="100%",
@@ -35,7 +37,8 @@ def search_form() -> rx.Component:
                     weight="bold",
                     color="#2D3748",
                     font_family="Playfair Display",
-                    margin_bottom="4",
+                    margin_bottom="6",
+                    margin_top="2",
                 ),
                 rx.form.root(
                     rx.vstack(
@@ -82,7 +85,8 @@ def search_form() -> rx.Component:
                 justify="center",
                 flex="1.2",
                 bg="#ffffff",
-                padding_x=["4", "6", "8"],
+                border_radius="15px",
+                padding_x=["5", "6", "8"],
                 padding_y="8",
                 width="100%",
             ),
@@ -103,6 +107,7 @@ def search_form() -> rx.Component:
             align_items="stretch",
         ),
         bg="#f8f9fa",
+        padding="4",
         border_radius="15px",
         box_shadow="0px 15px 35px rgba(0,0,0,0.06)",
         width="90%",

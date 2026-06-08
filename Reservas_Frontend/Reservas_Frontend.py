@@ -91,8 +91,163 @@ def offers_section() -> rx.Component:
         justify_content="center",
         bg = "#d7ba98", 
         )
-        
-        
+    
+def contact_section() -> rx.Component:
+    """Sección de contacto e información de la empresa."""
+
+    return rx.box(
+
+        rx.flex(
+
+            # ---------------- IMAGEN ----------------
+            rx.image(
+                src="/Mar.jpg",
+                width="40%",
+                height="300px",
+                object_fit="cover",
+                border_radius="20px 0 0 20px",
+            ),
+
+
+            # ---------------- CONTENIDO ----------------
+            rx.vstack(
+
+                rx.heading(
+                    "¿Tienes alguna pregunta?",
+                    size="6",
+                    font_family="Playfair Display",
+                    color="white",
+                    text_align="center",
+                ),
+
+
+                rx.text(
+                    "Contáctanos y te ayudamos a planear tu próxima aventura dominicana",
+                    size="3",
+                    font_family="Georgia",
+                    color="rgba(255,255,255,0.85)",
+                    text_align="center",
+                    max_width="500px",
+                ),
+
+
+                # -------- DATOS DE CONTACTO --------
+                rx.hstack(
+
+                    rx.vstack(
+                        rx.text(
+                            "Dirección",
+                            font_family="Playfair Display",
+                            font_style="italic",
+                            weight="bold",
+                            color="white",
+                            size="3",
+                        ),
+
+                        rx.text(
+                            "Av. Abraham Lincoln,\nSanto Domingo, RD",
+                            color="rgba(255,255,255,0.8)",
+                            size="2",
+                            text_align="center",
+                        ),
+
+                        align_items="center",
+                        spacing="2",
+                    ),
+
+
+
+                    rx.vstack(
+                        rx.text(
+                            "Email",
+                            font_family="Playfair Display",
+                            font_style="italic",
+                            weight="bold",
+                            color="white",
+                            size="3",
+                        ),
+
+                        rx.text(
+                            "hola@chillplans.do",
+                            color="rgba(255,255,255,0.8)",
+                            size="2",
+                            text_align="center",
+                        ),
+
+                        align_items="center",
+                        spacing="2",
+                    ),
+
+
+
+                    rx.vstack(
+                        rx.text(
+                            "WhatsApp",
+                            font_family="Playfair Display",
+                            font_style="italic",
+                            weight="bold",
+                            color="white",
+                            size="3",
+                        ),
+
+                        rx.text(
+                            "+1 (809) 000-0000",
+                            color="rgba(255,255,255,0.8)",
+                            size="2",
+                            text_align="center",
+                        ),
+
+                        align_items="center",
+                        spacing="2",
+                    ),
+
+
+                    spacing="6",
+                    justify="center",
+                    width="100%",
+                ),
+
+
+
+                # -------- BOTÓN --------
+                rx.link(
+                    rx.button(
+                        "Hacer una reserva →",
+                        size="3",
+                        bg="#e6a950",
+                        color="white",
+                        border_radius="12px",
+                        font_family="Playfair Display",
+                        cursor="pointer",
+                        _hover={
+                            "bg": "#cf9340"
+                        },
+                    ),
+                    href="/reservas",
+                    margin_top="6",
+                ),
+
+
+                spacing="5",
+                align_items="center",
+                width="60%",
+                padding="8",
+            ),
+
+
+            direction="row",
+            width="100%",
+            spacing="0",
+            align="stretch",
+        ),
+
+
+        width="100%",
+        bg="#198375",
+        overflow="hidden",
+        padding_x="6",
+    )
+   
 def index() -> rx.Component:
     # Welcome Page (Index)
     return rx.box(
@@ -114,6 +269,13 @@ def index() -> rx.Component:
             rx.box(height="40px", bg="#f5f0e9"),
             
             offers_section(),
+            
+            rx.box(height="40px", bg="#d7ba98"),
+            
+            contact_section(),
+            
+                rx.box(height="40px", bg="#198375"),
+            
             footer(),
             
             width="100%",  
@@ -132,4 +294,4 @@ app = rx.App(
         "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap",
     ],
 )
-app.add_page(index)
+app.add_page(index, route="/")
