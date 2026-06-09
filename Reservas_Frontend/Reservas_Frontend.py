@@ -9,6 +9,7 @@ from Reservas_Frontend.components.navbar import navbar_buttons
 from Reservas_Frontend.components.footer import footer
 from Reservas_Frontend.components.cards import cards
 from Reservas_Frontend.components.search import search_form
+from Reservas_Frontend.pages.admin_login import admin_login
 from Reservas_Frontend.mock_data import OFERTAS_MOCK
 
 
@@ -301,4 +302,5 @@ app = rx.App(
 app.add_page(index, route="/")
 app.add_page(descripcion, route="/descripcion")
 app.add_page(reservas, route="/reservas")
+app.add_page(admin_login, route="/admin_login")
 
