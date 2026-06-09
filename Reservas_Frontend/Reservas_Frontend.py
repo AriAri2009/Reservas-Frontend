@@ -2,11 +2,15 @@
 
 import reflex as rx
 
+from Reservas_Frontend.pages.descripcion import descripcion
+from Reservas_Frontend.pages.reservas import reservas
 from rxconfig import config
 from Reservas_Frontend.components.navbar import navbar_buttons
 from Reservas_Frontend.components.footer import footer
 from Reservas_Frontend.components.cards import cards
 from Reservas_Frontend.components.search import search_form
+#from Reservas_Frontend.mock_data import OFERTAS_MOCK
+
 
 class State(rx.State):
     """The app state."""
@@ -295,3 +299,6 @@ app = rx.App(
     ],
 )
 app.add_page(index, route="/")
+app.add_page(descripcion, route="/descripcion")
+app.add_page(reservas, route="/reservas")
+
