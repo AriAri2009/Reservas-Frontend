@@ -9,11 +9,11 @@ from Reservas_Frontend.components.navbar import navbar_buttons
 from Reservas_Frontend.components.footer import footer
 from Reservas_Frontend.components.cards import cards
 from Reservas_Frontend.components.search import search_form
-#from Reservas_Frontend.mock_data import OFERTAS_MOCK
+from Reservas_Frontend.mock_data import OFERTAS_MOCK
 
 
 class State(rx.State):
-    """The app state."""
+    ofertas = list = OFERTAS_MOCK
 
 def hero_section() -> rx.Component:
     return rx.vstack(
@@ -50,51 +50,51 @@ def hero_section() -> rx.Component:
 
 def offers_section() -> rx.Component:
     return rx.box(
-            rx.vstack(
-                rx.heading(
-                "Ofertas Destacadas",
+        rx.vstack(
+            rx.heading(
+                "Destinos Destacados",
                 size="6",
                 weight="bold",
                 font_family="Playfair Display",
-                color="white",
-                margin_bottom="4"
+                color="#0D3D37",
+                margin_bottom="1",
+            ),
+            rx.text(
+                "Los mejores rincones de la isla, curados para ti 🌴",
+                size="3",
+                color="#4a5568",
+                font_style="italic",
+                margin_bottom="6",
             ),
             rx.flex(
-            cards(
-                imagen_url="/Paris.jpg",
-                titulo_destino="París, Francia",
-                precio_destino="$999",
-                descripcion_corta="Descubre la ciudad del amor con nuestro paquete exclusivo."
-            ),
-            cards(
-                imagen_url="/Tokyo.jpg",
-                titulo_destino="Tokio, Japón",
-                precio_destino="$1299",
-                descripcion_corta="Explora la vibrante cultura japonesa con nosotros."
-            ),
-            cards(
-                imagen_url="/NewYork.jpg",
-                titulo_destino="Nueva York, EE.UU.",
-                precio_destino="$899",
-                descripcion_corta="Vive la energía de la Gran Manzana con nuestras ofertas especiales."
-            ),
-            spacing="6",  
-            wrap="wrap",
-            justify="center",  
-            width="100%", 
-            
+                # rx.foreach recorre State.ofertas
+                # Cuando la API esté lista, State.ofertas vendrá del GET /ofertas
+                # Por ahora usa OFERTAS_MOCK automáticamente
+                rx.foreach(
+                    State.ofertas,
+                    lambda oferta: cards(
+                        imagen_url=oferta["imagen_url"],
+                        titulo_destino=oferta["nombre"],
+                        precio_destino=oferta["precio"],
+                        descripcion_corta=oferta["descripcion_corta"],
+                    ),
+                ),
+                spacing="6",
+                wrap="wrap",
+                justify="center",
+                width="100%",
             ),
             width="100%",
-            max_width="1200px",    
+            max_width="1200px",
             padding_x="4",
-            padding_y="12", # Añade un espaciado estético arriba y abajo de la sección
-            
+            padding_y="12",
+            align_items="center",
         ),
         width="100%",
         display="flex",
         justify_content="center",
-        bg = "#d7ba98", 
-        )
+        bg="#d7ba98",
+    )
     
 def contact_section() -> rx.Component:
     """Sección de contacto e información de la empresa."""

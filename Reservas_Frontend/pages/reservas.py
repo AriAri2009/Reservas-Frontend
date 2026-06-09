@@ -520,5 +520,5 @@ def reservas() -> rx.Component:
 
         width="100%",
         min_height="100vh",
-        bg="#f5f0e9",
+        bg="#d7ba98",
     )
