@@ -63,7 +63,7 @@ def offers_section() -> rx.Component:
                 margin_bottom="1",
             ),
             rx.text(
-                "Los mejores rincones de la isla, curados para ti 🌴",
+                "¡Los mejores rincones de la isla, curados para ti!",
                 size="3",
                 color="#4a5568",
                 font_style="italic",

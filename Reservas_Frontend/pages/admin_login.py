@@ -1,4 +1,6 @@
 import reflex as rx
+from Reservas_Frontend.pages.admin_dashboard import AdminDashboardState
+
 
 class AdminLoginState(rx.State):
     usuario: str = ""
@@ -18,12 +20,27 @@ class AdminLoginState(rx.State):
     def set_password(self, value: str):
         self.password = value
         self.error = ""
+    
+    # En admin_login.py, si existe este método
+    def on_load_check(self):
+        if not AdminLoginState.logged_in:
+            return rx.redirect("/admin_login")
  
     async def iniciar_sesion(self):
         # Validación básica
         if not self.usuario.strip() or not self.password.strip():
             self.error = "Por favor completa todos los campos."
             return
+        if self.usuario == self.USUARIO_MOCK and self.password == self.PASSWORD_MOCK:
+            self.logged_in = True
+            self.error = ""
+            self.cargando = False
+        # Activar sesión en el dashboard
+            yield AdminDashboardState.activar_sesion()
+            yield rx.redirect("/admin_dashboard")
+        else:
+            self.error = "Usuario o contraseña incorrectos."
+            self.cargando = False
  
         self.cargando = True
         yield

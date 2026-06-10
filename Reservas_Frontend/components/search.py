@@ -65,6 +65,7 @@ def search_form() -> rx.Component:
                         width="100%",
                         margin_bottom="4",
                         padding="20px",
+                        
                     ),
                     # Mensaje de error debajo de los campos
                     rx.cond(
