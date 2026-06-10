@@ -18,6 +18,7 @@ def cards(imagen_url: str, titulo_destino: str, precio_destino: str, descripcion
                 font_family="Playfair Display",
                 color="#198375",
                 margin_bottom="2",
+                padding= "20px",
             ),
 
             rx.text(
@@ -25,6 +26,7 @@ def cards(imagen_url: str, titulo_destino: str, precio_destino: str, descripcion
                 size="2",
                 color="#718096",
                 line_height="1.4",
+                padding= "20px",
             ),
 
             rx.text(
@@ -33,6 +35,7 @@ def cards(imagen_url: str, titulo_destino: str, precio_destino: str, descripcion
                 weight="bold",
                 color="#2D3748",
                 margin_top="2",
+                padding= "20px",
             ),
 
             rx.link(
@@ -43,6 +46,7 @@ def cards(imagen_url: str, titulo_destino: str, precio_destino: str, descripcion
                     color="white",
                     width="100%",
                     cursor="pointer",
+                    box_shadow="0 4px 14px rgba(230,169,80,0.35)",
                     _hover={
                         "bg": "#f3a56a"
                     },

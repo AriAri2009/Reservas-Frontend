@@ -96,6 +96,7 @@ def tarjeta_descripcion() -> rx.Component:
                     font_family="Playfair Display",
                     text_transform="uppercase",
                     letter_spacing="1px",
+                    padding = "20px",
                 ),
                 rx.box(width="40px", height="3px", bg="#e6a950", border_radius="2px"),
                 rx.text(
@@ -104,6 +105,7 @@ def tarjeta_descripcion() -> rx.Component:
                     color="#4a5568",
                     line_height="1.9",
                     text_align="justify",
+                    padding = "20px",
                 ),
                 align_items="start",
                 spacing="3",
@@ -176,9 +178,8 @@ def columna_izquierda() -> rx.Component:
     )
  
  
-def fila_resumen(emoji: str, label: str, valor) -> rx.Component:
+def fila_resumen(label: str, valor) -> rx.Component:
     return rx.hstack(
-        rx.text(emoji, size="3"),
         rx.vstack(
             rx.text(label, size="1", color="#718096", weight="bold",
                     text_transform="uppercase", letter_spacing="0.5px"),
@@ -189,7 +190,7 @@ def fila_resumen(emoji: str, label: str, valor) -> rx.Component:
         align_items="start",
         spacing="3",
         width="100%",
-        padding_y="3",
+        padding="20px",
         border_bottom="1px solid #f0f0f0",
     )
  
@@ -204,6 +205,7 @@ def columna_derecha() -> rx.Component:
                 color="#198375",
                 weight="bold",
                 font_family="Playfair Display",
+                padding = "15px",
             ),
             rx.text("por persona", size="2", color="#718096"),
             align_items="start",
@@ -211,6 +213,7 @@ def columna_derecha() -> rx.Component:
             padding_bottom="4",
             border_bottom="1px solid #e2e8f0",
             width="100%",
+            padding = "20px",
         ),
         rx.text(
             "Detalles del viaje",
@@ -219,11 +222,12 @@ def columna_derecha() -> rx.Component:
             color="#0D3D37",
             font_family="Playfair Display",
             padding_top="2",
+            padding_x = "20px",
         ),
-        fila_resumen("◍","Duración", DescripcionState.destino["duracion"]),
-        fila_resumen("◍","Hospedaje", DescripcionState.destino["hospedaje"]),
-        fila_resumen("◍","Transporte", DescripcionState.destino["transporte"]),
-        fila_resumen("◍","Comidas", DescripcionState.destino["comidas"]),
+        fila_resumen("Duración", DescripcionState.destino["duracion"]),
+        fila_resumen("Hospedaje", DescripcionState.destino["hospedaje"]),
+        fila_resumen("Transporte", DescripcionState.destino["transporte"]),
+        fila_resumen("Comidas", DescripcionState.destino["comidas"]),
         rx.box(height="8px"),
         rx.link(
             rx.button(
@@ -235,6 +239,8 @@ def columna_derecha() -> rx.Component:
                 size="3",
                 _hover={"bg": "#cf9340"},
                 cursor="pointer",
+                padding = "20px",
+                box_shadow="0 4px 14px rgba(230,169,80,0.35)",
             ),
             href="/reservas",
             width="100%",
@@ -250,6 +256,7 @@ def columna_derecha() -> rx.Component:
                 size="2",
                 _hover={"bg": "#f0fff4"},
                 cursor="pointer",
+                padding = "20px",
             ),
             href="https://wa.me/18090000000",
             is_external=True,
@@ -294,7 +301,7 @@ def itinerario_section() -> rx.Component:
             spacing="3",
             width="100%",
             bg="white",
-            padding="6",
+            padding="20px",
             border_radius="12px",
             border="1px solid #e2e8f0",
         ),
@@ -310,6 +317,7 @@ def item_incluye(item: str) -> rx.Component:
         rx.text(item, size="2", color="#4a5568"),
         spacing="2",
         align_items="start",
+        padding="20px",
     )
  
  
@@ -319,6 +327,7 @@ def item_no_incluye(item: str) -> rx.Component:
         rx.text(item, size="2", color="#4a5568"),
         spacing="2",
         align_items="start",
+        padding="20px",
     )
  
  
@@ -331,7 +340,7 @@ def incluye_section() -> rx.Component:
             align_items="start",
             spacing="3",
             bg="white",
-            padding="6",
+            padding="20px",
             border_radius="12px",
             border="1px solid #e2e8f0",
             width="100%",
@@ -343,7 +352,7 @@ def incluye_section() -> rx.Component:
             align_items="start",
             spacing="3",
             bg="white",
-            padding="6",
+            padding="20px",
             border_radius="12px",
             border="1px solid #e2e8f0",
             width="100%",

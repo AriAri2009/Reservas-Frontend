@@ -157,10 +157,9 @@ class ReservaState(rx.State):
 
 # ─── COMPONENTES ──────────────────────────────────────────────────────────────
 
-def seccion_titulo(emoji: str, titulo: str) -> rx.Component:
+def seccion_titulo(titulo: str) -> rx.Component:
     """Título de sección reutilizable."""
     return rx.hstack(
-        rx.text(emoji, size="4"),
         rx.heading(titulo, size="4", font_family="Playfair Display", color="#0D3D37"),
         rx.divider(flex="1", border_color="#e2e8f0"),
         align_items="center",
@@ -187,7 +186,7 @@ def campo_formulario(label: str, componente: rx.Component) -> rx.Component:
 def seccion_contacto() -> rx.Component:
     """Sección de datos personales del usuario."""
     return rx.vstack(
-        seccion_titulo("👤", "Datos de contacto"),
+        seccion_titulo("Datos de contacto"),
         rx.grid(
             campo_formulario(
                 "Nombre completo *",
@@ -243,7 +242,7 @@ def seccion_actividad() -> rx.Component:
     nombres_destinos = [o["nombre"] for o in OFERTAS_MOCK]
 
     return rx.vstack(
-        seccion_titulo("✈️", "Detalles de la actividad"),
+        seccion_titulo("Detalles de la actividad"),
         rx.grid(
             campo_formulario(
                 "Destino *",
@@ -304,7 +303,7 @@ def seccion_pago() -> rx.Component:
     Muestra el precio calculado automáticamente.
     """
     return rx.vstack(
-        seccion_titulo("💳", "Información de pago"),
+        seccion_titulo("Información de pago"),
         rx.box(
             rx.vstack(
                 # Resumen de precio
@@ -359,7 +358,6 @@ def seccion_pago() -> rx.Component:
                 rx.divider(border_color="#e2e8f0", margin_y="4"),
                 # Nota informativa
                 rx.hstack(
-                    rx.text("ℹ️", size="3"),
                     rx.text(
                         "El pago se confirma con nuestro equipo por WhatsApp. "
                         "Te contactaremos dentro de las próximas 24 horas para coordinar.",
@@ -396,7 +394,7 @@ def mensaje_respuesta() -> rx.Component:
         rx.box(
             rx.hstack(
                 rx.text(
-                    rx.cond(ReservaState.exito, "✅", "❌"),
+                    rx.cond(ReservaState.exito, "✓", "✗"),
                     size="4",
                 ),
                 rx.text(
@@ -480,7 +478,7 @@ def reservas() -> rx.Component:
                             rx.cond(
                                 ReservaState.enviando,
                                 "Enviando...",
-                                "🚀 Confirmar y registrar reserva",
+                                "Confirmar y registrar reserva",
                             ),
                             on_click=ReservaState.enviar_reserva,
                             size="4",

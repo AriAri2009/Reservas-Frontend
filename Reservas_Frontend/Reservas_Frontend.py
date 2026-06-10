@@ -123,6 +123,7 @@ def contact_section() -> rx.Component:
                     font_family="Playfair Display",
                     color="white",
                     text_align="center",
+                    padding_top="24px",
                 ),
 
 

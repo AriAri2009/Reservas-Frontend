@@ -95,6 +95,7 @@ def campo_input(
             type=tipo,
             style={
                 "width": "100%",
+                "height": "42px",
                 "padding": "12px 16px",
                 "border": "1.5px solid #D6C9B0",
                 "border_radius": "10px",
@@ -183,7 +184,8 @@ def boton_login() -> rx.Component:
                         "color": "white",
                         "font_weight": "700",
                         "font_size": "1rem",
-                        "font_family": "Inter, sans-serif",
+                        "font_family": "Georgia, serif",
+                        "font_weight": "bold",
                         "letter_spacing": "0.03em",
                     },
                 ),
@@ -258,7 +260,7 @@ def admin_login() -> rx.Component:
                     
                     rx.image(
                         src="/Chill.png",
-                        width="180px",
+                        width="250px",
                         height="auto",
                         style={"object_fit": "contain"},
                     ),
@@ -278,9 +280,10 @@ def admin_login() -> rx.Component:
                     rx.text(
                         "Panel de administración",
                         style={
-                            "font_size": "0.88rem",
+                            "font_size": "0.92rem",
                             "color": "#cf9340",
                             "font_family": "Playfair Display, serif",
+                            "font_weight": "bold",
                             "margin_top": "-6px",
                         },
                     ),

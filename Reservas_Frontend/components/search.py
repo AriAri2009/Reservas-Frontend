@@ -39,6 +39,8 @@ def search_form() -> rx.Component:
                     font_family="Playfair Display",
                     margin_bottom="6",
                     margin_top="2",
+                    padding= "20px",
+                    align ="center",
                 ),
                 rx.form.root(
                     rx.vstack(
@@ -59,6 +61,7 @@ def search_form() -> rx.Component:
                             direction="column",
                             width="100%",
                             margin_bottom="4",
+                            padding="20px",
                         ),
                         rx.form.submit(
                             rx.button(
@@ -71,7 +74,7 @@ def search_form() -> rx.Component:
                                 cursor="pointer",
                                 border_radius="10px",
                                 width="100%",
-                                padding_y="1.5em",
+                                padding= "20px",
                             ),
                             as_child=True,
                             width="100%",
