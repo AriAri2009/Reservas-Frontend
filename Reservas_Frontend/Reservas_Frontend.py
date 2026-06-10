@@ -5,16 +5,18 @@ import reflex as rx
 from Reservas_Frontend.pages.descripcion import descripcion
 from Reservas_Frontend.pages.reservas import reservas
 from rxconfig import config
+from Reservas_Frontend.state import HomeState
 from Reservas_Frontend.components.navbar import navbar_buttons
 from Reservas_Frontend.components.footer import footer
 from Reservas_Frontend.components.cards import cards
 from Reservas_Frontend.components.search import search_form
 from Reservas_Frontend.pages.admin_login import admin_login
+from Reservas_Frontend.pages.admin_dashboard import admin_dashboard
 from Reservas_Frontend.mock_data import OFERTAS_MOCK
 
 
-class State(rx.State):
-    ofertas = list = OFERTAS_MOCK
+class State(HomeState):
+    """The app state."""
 
 def hero_section() -> rx.Component:
     return rx.vstack(
@@ -67,23 +69,52 @@ def offers_section() -> rx.Component:
                 font_style="italic",
                 margin_bottom="6",
             ),
-            rx.flex(
-                # rx.foreach recorre State.ofertas
-                # Cuando la API esté lista, State.ofertas vendrá del GET /ofertas
-                # Por ahora usa OFERTAS_MOCK automáticamente
-                rx.foreach(
-                    State.ofertas,
-                    lambda oferta: cards(
-                        imagen_url=oferta["imagen_url"],
-                        titulo_destino=oferta["nombre"],
-                        precio_destino=oferta["precio"],
-                        descripcion_corta=oferta["descripcion_corta"],
+            # Mensaje cuando la búsqueda no tiene resultados
+            rx.cond(
+                HomeState.resultados.length() == 0,
+                rx.vstack(
+                    rx.icon("map-pin-off", size=40, color="#9B8A6E"),
+                    rx.text(
+                        "No encontramos ese destino.",
+                        size="4",
+                        weight="bold",
+                        color="#2D3748",
+                        font_family="Playfair Display",
                     ),
+                    rx.text(
+                        "Intenta con otro nombre o explora todos nuestros planes.",
+                        size="3",
+                        color="#718096",
+                    ),
+                    rx.button(
+                        "Ver todos los destinos",
+                        on_click=HomeState.set_busqueda_nombre(""),
+                        bg="#198375",
+                        color="white",
+                        border_radius="10px",
+                        cursor="pointer",
+                        _hover={"bg": "#0D3D37"},
+                    ),
+                    spacing="3",
+                    align="center",
+                    padding_y="60px",
                 ),
-                spacing="6",
-                wrap="wrap",
-                justify="center",
-                width="100%",
+                rx.flex(
+                    rx.foreach(
+                        HomeState.resultados,
+                        lambda oferta: cards(
+                            imagen_url=oferta["imagen_url"],
+                            titulo_destino=oferta["nombre"],
+                            precio_destino=oferta["precio"],
+                            descripcion_corta=oferta["descripcion_corta"],
+                            destino_id=oferta["id"],
+                        ),
+                    ),
+                    spacing="6",
+                    wrap="wrap",
+                    justify="center",
+                    width="100%",
+                ),
             ),
             width="100%",
             max_width="1200px",
@@ -91,6 +122,7 @@ def offers_section() -> rx.Component:
             padding_y="12",
             align_items="center",
         ),
+        id="ofertas",   # ← el scroll del buscador apunta aquí
         width="100%",
         display="flex",
         justify_content="center",
@@ -304,4 +336,5 @@ app.add_page(index, route="/")
 app.add_page(descripcion, route="/descripcion")
 app.add_page(reservas, route="/reservas")
 app.add_page(admin_login, route="/admin_login")
+app.add_page(admin_dashboard, route="/admin_dashboard")
 

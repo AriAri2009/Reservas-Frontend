@@ -36,7 +36,7 @@ class AdminLoginState(rx.State):
             self.logged_in = True
             self.error = ""
             self.cargando = False
-            yield rx.redirect("/admin/dashboard")
+            yield rx.redirect("/admin_dashboard")
         else:
             self.error = "Usuario o contraseña incorrectos."
             self.cargando = False
@@ -47,7 +47,7 @@ class AdminLoginState(rx.State):
         # try:
         #     async with httpx.AsyncClient() as client:
         #         resp = await client.post(
-        #             f"{API_URL}/admin/login",
+        #             f"{API_URL}/admin_login",
         #             json={"usuario": self.usuario, "password": self.password},
         #             timeout=10.0,
         #         )
@@ -55,7 +55,7 @@ class AdminLoginState(rx.State):
         #         self.logged_in = True
         #         self.error = ""
         #         self.cargando = False
-        #         yield rx.redirect("/admin/dashboard")
+        #         yield rx.redirect("/admin_dashboard")
         #     else:
         #         self.error = "Usuario o contraseña incorrectos."
         #         self.cargando = False
