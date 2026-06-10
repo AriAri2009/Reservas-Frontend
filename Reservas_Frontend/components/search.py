@@ -19,9 +19,11 @@ def form_field(label: str, placeholder: str, type: str, on_change) -> rx.Compone
             bg="#f5f5f5",
             border_color="#e2e8f0",
             border_radius="12px",
-            padding_y="1.5em",
+            height="50px",
+            padding_x="14px",
             width="100%",
             margin_top="1",
+            
         ),
         spacing="1",
         width="100%",
