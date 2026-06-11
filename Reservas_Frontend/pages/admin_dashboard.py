@@ -1,366 +1,161 @@
 import reflex as rx
+import httpx
+import asyncio
 
- 
- 
-RESERVAS_MOCK = [
-    {"id": 1, "nombre": "María Rodríguez", "email": "maria@email.com", "telefono": "809-555-0101", "destino": "Playa Rincón, Samaná",     "personas": 2, "fecha": "2025-08-15", "pago": "Tarjeta",       "estado": "Confirmada"},
-    {"id": 2, "nombre": "Carlos Méndez",   "email": "carlos@email.com","telefono": "829-555-0234", "destino": "Laguna Dudú, Río San Juan", "personas": 4, "fecha": "2025-09-02", "pago": "Transferencia", "estado": "Pendiente"},
-    {"id": 3, "nombre": "Ana Jiménez",     "email": "ana.j@email.com", "telefono": "849-555-0378", "destino": "Isla Saona, La Romana",     "personas": 2, "fecha": "2025-09-20", "pago": "Efectivo",      "estado": "Confirmada"},
-    {"id": 4, "nombre": "Luis Peña",       "email": "lpeña@email.com", "telefono": "809-555-0492", "destino": "27 Charcos de Damajagua",   "personas": 3, "fecha": "2025-10-05", "pago": "Tarjeta",       "estado": "Pendiente"},
-]
- 
-DESTINOS_MOCK = [
-    {
-        "id": 1, "nombre": "Playa Rincón, Samaná", "precio": 4500, "duracion": "1 día completo", "activo": True,
-        "descripcion_corta": "Una de las playas más vírgenes del Caribe.",
-        "descripcion_general": "Playa Rincón es considerada una de las diez playas más hermosas del mundo.",
-        "imagen_url": "/playa_rincon.jpg",           # inicio + hero descripción
-        "imagen_secundaria": "/playa_rincon2.jpg",   # tarjeta principal descripción
-        "imagen_galeria_1": "/playa_rincon3.jpg",    # galería descripción
-        "imagen_galeria_2": "/playa_rincon4.jpg",
-        "imagen_galeria_3": "/playa_rincon5.jpg",
-        "hospedaje": "No incluido (day trip)", "transporte": "Lancha incluida", "comidas": "Almuerzo de pescado incluido",
-        "incluye": "Transporte en lancha, Almuerzo de pescado, Guía local, Equipo de snorkel",
-        "no_incluye": "Bebidas adicionales, Propinas, Gastos personales",
-        "itinerario": "07:00 AM — Salida desde Santo Domingo\n10:30 AM — Llegada a Las Galeras\n11:00 AM — Llegada a Playa Rincón\n01:00 PM — Almuerzo\n03:30 PM — Regreso",
-    },
-    {
-        "id": 2, "nombre": "Laguna Dudú, Río San Juan", "precio": 3800, "duracion": "1 día completo", "activo": True,
-        "descripcion_corta": "Lagunas azul turquesa rodeadas de palmeras.",
-        "descripcion_general": "La Laguna Dudú es un sistema de lagunas naturales de aguas azul intenso.",
-        "imagen_url": "/laguna_dudu.jpg",
-        "imagen_secundaria": "/laguna_dudu2.jpg",
-        "imagen_galeria_1": "/laguna_dudu3.jpg",
-        "imagen_galeria_2": "/laguna_dudu4.jpg",
-        "imagen_galeria_3": "/laguna_dudu5.jpg",
-        "hospedaje": "No incluido", "transporte": "Autobús incluido desde SD", "comidas": "Snacks incluidos",
-        "incluye": "Transporte ida y vuelta, Entrada a las lagunas, Tirolesa, Snacks y agua, Guía local",
-        "no_incluye": "Almuerzo, Propinas, Fotografías profesionales",
-        "itinerario": "06:30 AM — Salida desde Santo Domingo\n10:00 AM — Llegada a Laguna Dudú\n10:15 AM — Tirolesa\n04:30 PM — Salida de regreso",
-    },
-    {
-        "id": 3, "nombre": "Isla Saona, La Romana", "precio": 6200, "duracion": "1 día completo", "activo": True,
-        "descripcion_corta": "La postal perfecta del Caribe.",
-        "descripcion_general": "Isla Saona forma parte del Parque Nacional del Este.",
-        "imagen_url": "/isla_saona.jpg",
-        "imagen_secundaria": "/isla_saona2.jpg",
-        "imagen_galeria_1": "/isla_saona3.jpg",
-        "imagen_galeria_2": "/isla_saona4.jpg",
-        "imagen_galeria_3": "/isla_saona5.jpg",
-        "hospedaje": "No incluido", "transporte": "Catamarán y lancha incluidos", "comidas": "Almuerzo buffet y open bar",
-        "incluye": "Lancha rápida de ida, Catamarán de regreso con open bar, Piscina natural, Almuerzo buffet, Snorkel",
-        "no_incluye": "Bebidas fuera del open bar, Propinas, Fotos profesionales",
-        "itinerario": "08:00 AM — Salida en lancha\n09:30 AM — Piscina natural\n11:00 AM — Isla Saona\n03:00 PM — Regreso en catamarán",
-    },
-    {
-        "id": 4, "nombre": "27 Charcos de Damajagua", "precio": 5100, "duracion": "1 día completo", "activo": False,
-        "descripcion_corta": "Adrenalina pura entre cascadas naturales.",
-        "descripcion_general": "Sistema de cascadas naturales de roca caliza ubicadas cerca de Puerto Plata.",
-        "imagen_url": "/damajagua.jpg",
-        "imagen_secundaria": "/damajagua2.jpg",
-        "imagen_galeria_1": "/damajagua3.jpg",
-        "imagen_galeria_2": "/damajagua4.jpg",
-        "imagen_galeria_3": "/damajagua5.jpg",
-        "hospedaje": "No incluido", "transporte": "Autobús desde Puerto Plata", "comidas": "No incluidas",
-        "incluye": "Transporte, Entrada y guía certificado, Casco y chaleco, Opción de 7/12/27 charcos",
-        "no_incluye": "Alimentación, Propinas, Zapatos de agua",
-        "itinerario": "08:30 AM — Encuentro en Puerto Plata\n09:30 AM — Llegada a Damajagua\n10:00 AM — Caminata\n04:00 PM — Regreso",
-    },
-]
- 
+# ── 1. AGREGA ESTAS 4 LÍNEAS AQUÍ (FUERA DE LA CLASE) ──
+API_URL = "http://localhost:8000" 
+
+
+# ── 3. COLORES GLOBALES DE TU DISEÑO ──
 ESTADOS_RESERVA = ["Confirmada", "Pendiente", "Cancelada"]
- 
-GOLD   = "#C8902A"
-DARK   = "#2C2416"
-MUTED  = "#9B8A6E"
+GOLD, DARK, BG = "#C8902A", "#2C2416", "#FAF6EF"
+WHITE = "#FFFFFF"
+MUTED = "#9B8A6E"
 BORDER = "#EDE0C4"
-BG     = "#FAF6EF"
-WHITE  = "white"
- 
-# Anchos fijos para cada columna de la tabla de reservas
-COL_WIDTHS_RESERVA = {
-    "id":       "50px",
-    "nombre":   "150px",
-    "email":    "180px",
-    "telefono": "130px",
-    "destino":  "180px",
-    "personas": "80px",
-    "fecha":    "100px",
-    "pago":     "110px",
-    "estado":   "110px",
-    "acciones": "90px",
-}
- 
-COL_WIDTHS_DESTINO = {
-    "id":       "50px",
-    "nombre":   "220px",
-    "precio":   "110px",
-    "duracion": "140px",
-    "estado":   "90px",
-    "acciones": "110px",
-}
- 
- 
-# ═══════════════════════════════════════════════════════
-#  ESTADO
-# ═══════════════════════════════════════════════════════
+
+# ── 4. CONFIGURACIÓN DE TABLAS (Esto quitará los errores de COL_WIDTHS) ──
+# Define los anchos de las columnas para tus tablas de administración
+COL_WIDTHS_RESERVA = ["50px", "150px", "180px", "120px", "130px", "60px", "110px", "100px", "100px"]
+COL_WIDTHS_DESTINO = ["50px", "150px", "250px", "100px", "100px", "100px"]
+# ── 2. AQUÍ ENTRA TU CLASE STATE ──
 class AdminDashboardState(rx.State):
-    pestana_activa: str = "Reservas"
- 
-    sesion_activa: bool = False
-    logged_in_cache: bool = False
-    # Reservas
-    reservas: list[dict] = RESERVAS_MOCK
+    pestana_activa: str = "Reservas" 
+    sesion_activa: bool = False  # Switch de seguridad para el login
+    
+    # Contenedores para las tuplas que vienen de tu MySQL en Aiven
+    reservas: list[dict] = []
     cargando_reservas: bool = False
+    
+    destinos: list[dict] = []
+    cargando_destinos: bool = False
+    
+    # Control de las ventanas flotantes (Modales)
     modal_estado_abierto: bool = False
     reserva_sel_id: int = -1
     nuevo_estado: str = ""
+    
     modal_del_reserva_abierto: bool = False
     reserva_del_id: int = -1
- 
-    # Destinos — campos del formulario completo
-    destinos: list[dict] = DESTINOS_MOCK
-    cargando_destinos: bool = False
-    modal_destino_abierto: bool = False
-    destino_edit_id: int = -1
-    form_nombre: str = ""
-    form_precio: str = ""
-    form_duracion: str = ""
-    form_activo: bool = True
-    form_descripcion_corta: str = ""
-    form_descripcion_general: str = ""
-    form_imagen_url: str = ""
-    form_imagen_secundaria: str = ""
-    form_imagen_galeria_1: str = ""
-    form_imagen_galeria_2: str = ""
-    form_imagen_galeria_3: str = ""
-    form_hospedaje: str = ""
-    form_transporte: str = ""
-    form_comidas: str = ""
-    form_incluye: str = ""
-    form_no_incluye: str = ""
-    form_itinerario: str = ""
-    form_error: str = ""
-    modal_del_destino_abierto: bool = False
-    destino_del_id: int = -1
- 
-    # Toast
+
+    # Notificaciones tipo Toast
     toast_msg: str = ""
     toast_tipo: str = "ok"
- 
+
+    # ── VARIABLES DINÁMICAS (Se calculan solas en tiempo real) ──
     @rx.var
-    def total_reservas(self) -> int:
+    def total_reservas(self) -> int: 
         return len(self.reservas)
- 
+
     @rx.var
-    def reservas_confirmadas(self) -> int:
+    def reservas_confirmadas(self) -> int: 
         return sum(1 for r in self.reservas if r.get("estado") == "Confirmada")
- 
+
     @rx.var
-    def reservas_pendientes(self) -> int:
+    def reservas_pendientes(self) -> int: 
         return sum(1 for r in self.reservas if r.get("estado") == "Pendiente")
- 
+
     @rx.var
-    def destinos_activos(self) -> int:
+    def destinos_activos(self) -> int: 
         return sum(1 for d in self.destinos if d.get("activo"))
- 
-    @rx.var
-    def modal_destino_titulo(self) -> str:
-        return "Nuevo destino" if self.destino_edit_id == -1 else "Editar destino"
- 
-    def cambiar_pestana(self, p: str):
+
+    # ── ACCIONES INTERNAS ──
+    def cambiar_pestana(self, p: str): 
         self.pestana_activa = p
-    
-    def activar_sesion(self):
-        """Llamado desde admin_login cuando el login es exitoso."""
+
+    def activar_sesion(self): 
         self.sesion_activa = True
- 
+
     def cerrar_sesion(self):
         self.sesion_activa = False
         return rx.redirect("/admin_login")
- 
+
     def on_load_check(self):
-    # Copia el valor al State local para poder usarlo con if normal
-       if not self.sesion_activa:
+        """Seguridad: Si intentan entrar por URL sin loguearse, los rebota al login"""
+        if not self.sesion_activa: 
             return rx.redirect("/admin_login")
- 
+
     async def _toast(self, msg: str, tipo: str = "ok"):
+        """Muestra alertas flotantes en pantalla"""
         self.toast_msg = msg
         self.toast_tipo = tipo
         yield
-        import asyncio; await asyncio.sleep(3)
+        await asyncio.sleep(3)
         self.toast_msg = ""
- 
-    # ── Reservas ──
+
+    # ── MÉTODOS HTTP PARA EL CRUD CON FASTAPI ──
+
     async def cargar_reservas(self):
-        self.cargando_reservas = True; yield
-        import asyncio; await asyncio.sleep(0.6)
-        self.reservas = RESERVAS_MOCK
-        self.cargando_reservas = False
- 
+        """[READ] Hace un GET a FastAPI para traer las reservas reales de Aiven"""
+        self.cargando_reservas = True
+        yield
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(f"{API_URL}/reservas", timeout=10.0)
+                if response.status_code == 200:
+                    self.reservas = response.json()
+                else:
+                    await self._toast("Error al procesar los datos de la API", "error")
+        except Exception:
+            await self._toast("Sin respuesta del servidor backend (FastAPI)", "error")
+        finally:
+            self.cargando_reservas = False
+            yield
+
     def abrir_modal_estado(self, rid: int):
+        """Busca la reserva actual y abre el modal para cambiar su estado"""
         self.reserva_sel_id = rid
         for r in self.reservas:
             if r["id"] == rid:
-                self.nuevo_estado = r["estado"]; break
+                self.nuevo_estado = r["estado"]
+                break
         self.modal_estado_abierto = True
- 
-    def cerrar_modal_estado(self):
+
+    def cerrar_modal_estado(self): 
         self.modal_estado_abierto = False
- 
-    def set_nuevo_estado(self, v: str):
+
+    def set_nuevo_estado(self, v: str): 
         self.nuevo_estado = v
- 
+
     async def guardar_estado(self):
-        self.reservas = [
-            {**r, "estado": self.nuevo_estado} if r["id"] == self.reserva_sel_id else r
-            for r in self.reservas
-        ]
-        self.modal_estado_abierto = False
-        async for _ in self._toast(f"Estado → {self.nuevo_estado}"): yield
- 
+        """[UPDATE] Modifica el estado con una petición PATCH a la base de datos"""
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.patch(
+                    f"{API_URL}/reservas/{self.reserva_sel_id}/estado",
+                    json={"estado": self.nuevo_estado},
+                    timeout=10.0
+                )
+                if response.status_code == 200:
+                    await self.cargar_reservas()  # Recarga la tabla automáticamente
+                    self.modal_estado_abierto = False
+                    async for _ in self._toast(f"Estado actualizado → {self.nuevo_estado}"): 
+                        yield
+                else:
+                    await self._toast("No se pudo guardar el cambio en SQL", "error")
+        except Exception:
+            await self._toast("Error crítico de comunicación PATCH", "error")
+
     def abrir_del_reserva(self, rid: int):
         self.reserva_del_id = rid
         self.modal_del_reserva_abierto = True
- 
-    def cerrar_del_reserva(self):
+
+    def cerrar_del_reserva(self): 
         self.modal_del_reserva_abierto = False
- 
+
     async def confirmar_del_reserva(self):
-        self.reservas = [r for r in self.reservas if r["id"] != self.reserva_del_id]
-        self.modal_del_reserva_abierto = False
-        async for _ in self._toast("Reserva eliminada", "error"): yield
- 
-    # ── Destinos ──
-    async def cargar_destinos(self):
-        self.cargando_destinos = True; yield
-        import asyncio; await asyncio.sleep(0.6)
-        self.destinos = DESTINOS_MOCK
-        self.cargando_destinos = False
- 
-    def _limpiar_form(self):
-        self.destino_edit_id = -1
-        self.form_nombre = ""; self.form_precio = ""
-        self.form_duracion = ""; self.form_activo = True
-        self.form_descripcion_corta = ""; self.form_descripcion_general = ""
-        self.form_imagen_url = ""; self.form_imagen_secundaria = ""
-        self.form_imagen_galeria_1 = ""; self.form_imagen_galeria_2 = ""; self.form_imagen_galeria_3 = ""
-        self.form_hospedaje = ""; self.form_transporte = ""; self.form_comidas = ""
-        self.form_incluye = ""; self.form_no_incluye = ""; self.form_itinerario = ""
-        self.form_error = ""
- 
-    def abrir_nuevo_destino(self):
-        self._limpiar_form()
-        self.modal_destino_abierto = True
- 
-    def abrir_editar_destino(self, did: int):
-        self._limpiar_form()
-        for d in self.destinos:
-            if d["id"] == did:
-                self.destino_edit_id        = did
-                self.form_nombre            = d.get("nombre", "")
-                self.form_precio            = str(d.get("precio", ""))
-                self.form_duracion          = d.get("duracion", "")
-                self.form_activo            = d.get("activo", True)
-                self.form_descripcion_corta   = d.get("descripcion_corta", "")
-                self.form_descripcion_general = d.get("descripcion_general", "")
-                self.form_imagen_url          = d.get("imagen_url", "")
-                self.form_imagen_secundaria   = d.get("imagen_secundaria", "")
-                self.form_imagen_galeria_1    = d.get("imagen_galeria_1", "")
-                self.form_imagen_galeria_2    = d.get("imagen_galeria_2", "")
-                self.form_imagen_galeria_3    = d.get("imagen_galeria_3", "")
-                self.form_hospedaje           = d.get("hospedaje", "")
-                self.form_transporte          = d.get("transporte", "")
-                self.form_comidas             = d.get("comidas", "")
-                self.form_incluye             = d.get("incluye", "")
-                self.form_no_incluye          = d.get("no_incluye", "")
-                self.form_itinerario          = d.get("itinerario", "")
-                break
-        self.modal_destino_abierto = True
- 
-    def cerrar_modal_destino(self):
-        self.modal_destino_abierto = False
- 
-    def set_form_nombre(self, v: str):              self.form_nombre = v
-    def set_form_precio(self, v: str):              self.form_precio = v
-    def set_form_duracion(self, v: str):            self.form_duracion = v
-    def toggle_activo(self):                        self.form_activo = not self.form_activo
-    def set_form_desc_corta(self, v: str):          self.form_descripcion_corta = v
-    def set_form_desc_general(self, v: str):        self.form_descripcion_general = v
-    def set_form_imagen_url(self, v: str):          self.form_imagen_url = v
-    def set_form_imagen_secundaria(self, v: str):   self.form_imagen_secundaria = v
-    def set_form_imagen_galeria_1(self, v: str):    self.form_imagen_galeria_1 = v
-    def set_form_imagen_galeria_2(self, v: str):    self.form_imagen_galeria_2 = v
-    def set_form_imagen_galeria_3(self, v: str):    self.form_imagen_galeria_3 = v
-    def set_form_hospedaje(self, v: str):           self.form_hospedaje = v
-    def set_form_transporte(self, v: str):          self.form_transporte = v
-    def set_form_comidas(self, v: str):             self.form_comidas = v
-    def set_form_incluye(self, v: str):             self.form_incluye = v
-    def set_form_no_incluye(self, v: str):          self.form_no_incluye = v
-    def set_form_itinerario(self, v: str):          self.form_itinerario = v
- 
-    async def guardar_destino(self):
-        if not self.form_nombre.strip():
-            self.form_error = "El nombre es obligatorio."; return
-        if not self.form_precio.strip() or not self.form_precio.replace(".","").isdigit():
-            self.form_error = "Ingresa un precio válido."; return
-        if not self.form_duracion.strip():
-            self.form_error = "La duración es obligatoria."; return
-        if not self.form_imagen_url.strip():
-            self.form_error = "La imagen principal es obligatoria."; return
- 
-        nuevo_data = {
-            "nombre":               self.form_nombre.strip(),
-            "precio":               float(self.form_precio),
-            "duracion":             self.form_duracion.strip(),
-            "activo":               self.form_activo,
-            "descripcion_corta":    self.form_descripcion_corta.strip(),
-            "descripcion_general":  self.form_descripcion_general.strip(),
-            "imagen_url":           self.form_imagen_url.strip(),
-            "imagen_secundaria":    self.form_imagen_secundaria.strip(),
-            "imagen_galeria_1":     self.form_imagen_galeria_1.strip(),
-            "imagen_galeria_2":     self.form_imagen_galeria_2.strip(),
-            "imagen_galeria_3":     self.form_imagen_galeria_3.strip(),
-            "hospedaje":            self.form_hospedaje.strip(),
-            "transporte":           self.form_transporte.strip(),
-            "comidas":              self.form_comidas.strip(),
-            "incluye":              self.form_incluye.strip(),
-            "no_incluye":           self.form_no_incluye.strip(),
-            "itinerario":           self.form_itinerario.strip(),
-        }
- 
-        if self.destino_edit_id == -1:
-            nid = max((d["id"] for d in self.destinos), default=0) + 1
-            self.destinos = self.destinos + [{"id": nid, **nuevo_data}]
-            async for _ in self._toast(f'"{self.form_nombre}" agregado'): yield
-        else:
-            self.destinos = [
-                {**d, **nuevo_data} if d["id"] == self.destino_edit_id else d
-                for d in self.destinos
-            ]
-            async for _ in self._toast("Destino actualizado"): yield
-        self.modal_destino_abierto = False
- 
-    def abrir_del_destino(self, did: int):
-        self.destino_del_id = did
-        self.modal_del_destino_abierto = True
- 
-    def cerrar_del_destino(self):
-        self.modal_del_destino_abierto = False
- 
-    async def confirmar_del_destino(self):
-        self.destinos = [d for d in self.destinos if d["id"] != self.destino_del_id]
-        self.modal_del_destino_abierto = False
-        async for _ in self._toast("Destino eliminado", "error"): yield
- 
-    async def toggle_activo_destino(self, did: int):
-        self.destinos = [
-            {**d, "activo": not d["activo"]} if d["id"] == did else d
-            for d in self.destinos
-        ]
-        async for _ in self._toast("Visibilidad actualizada"): yield
- 
- 
+        """[DELETE] Elimina la fila por completo usando el método DELETE en la API"""
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.delete(f"{API_URL}/reservas/{self.reserva_del_id}", timeout=10.0)
+                if response.status_code == 200:
+                    await self.cargar_reservas()  # Remueve el registro de la vista al instante
+                    self.modal_del_reserva_abierto = False
+                    async for _ in self._toast("Reserva eliminada directamente de las tablas SQL", "error"): 
+                        yield
+                else:
+                    await self._toast("El backend rechazó la solicitud de borrado", "error")
+        except Exception:
+            await self._toast("Error de conexión DELETE", "error") 
 # ═══════════════════════════════════════════════════════
 #  HELPERS UI
 # ═══════════════════════════════════════════════════════

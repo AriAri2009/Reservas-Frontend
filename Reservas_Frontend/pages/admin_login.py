@@ -1,17 +1,17 @@
 import reflex as rx
+import httpx
 from Reservas_Frontend.pages.admin_dashboard import AdminDashboardState
 
+# ── VARIABLE GLOBAL (FUERA DE LA CLASE) ──
+API_URL = "http://localhost:8000" 
 
+# ── 1. LA LÓGICA DEL ESTADO (DENTRO DE LA CLASE) ──
 class AdminLoginState(rx.State):
     usuario: str = ""
     password: str = ""
     error: str = ""
     cargando: bool = False
     logged_in: bool = False
- 
-    # Credenciales simuladas hasta que el backend tenga el endpoint
-    USUARIO_MOCK: str = "admin"
-    PASSWORD_MOCK: str = "chillplans2025"
  
     def set_usuario(self, value: str):
         self.usuario = value
@@ -20,66 +20,41 @@ class AdminLoginState(rx.State):
     def set_password(self, value: str):
         self.password = value
         self.error = ""
-    
-    # En admin_login.py, si existe este método
-    def on_load_check(self):
-        if not AdminLoginState.logged_in:
-            return rx.redirect("/admin_login")
  
     async def iniciar_sesion(self):
-        # Validación básica
         if not self.usuario.strip() or not self.password.strip():
             self.error = "Por favor completa todos los campos."
             return
-        if self.usuario == self.USUARIO_MOCK and self.password == self.PASSWORD_MOCK:
-            self.logged_in = True
-            self.error = ""
-            self.cargando = False
-        # Activar sesión en el dashboard
-            yield AdminDashboardState.activar_sesion()
-            yield rx.redirect("/admin_dashboard")
-        else:
-            self.error = "Usuario o contraseña incorrectos."
-            self.cargando = False
  
         self.cargando = True
+        self.error = ""
         yield
  
-        # ── OPCIÓN A: Login simulado (activo por ahora) ──────────────────
-        import asyncio
-        await asyncio.sleep(0.8)  # Simula latencia de red
- 
-        if self.usuario == self.USUARIO_MOCK and self.password == self.PASSWORD_MOCK:
-            self.logged_in = True
-            self.error = ""
+        try:
+            async with httpx.AsyncClient() as client:
+                resp = await client.post(
+                    f"{API_URL}/admin_login",
+                    json={
+                        "usuario": self.usuario, 
+                        "password": self.password
+                    },
+                    timeout=10.0,
+                )
+            
+            if resp.status_code == 200:
+                self.logged_in = True
+                self.error = ""
+                self.cargando = False
+                yield AdminDashboardState.activar_sesion()
+                yield rx.redirect("/admin_dashboard")
+            else:
+                self.error = "Usuario o contraseña incorrectos."
+                self.cargando = False
+                yield
+        except Exception:
+            self.error = "No se pudo conectar con el servidor. Verifica la IP del backend."
             self.cargando = False
-            yield rx.redirect("/admin_dashboard")
-        else:
-            self.error = "Usuario o contraseña incorrectos."
-            self.cargando = False
- 
-        # ── OPCIÓN B: Login real con API (descomentar cuando el backend esté listo) ──
-        # import httpx
-        # API_URL = "http://localhost:8000"  # Cambiar por URL de Render en producción
-        # try:
-        #     async with httpx.AsyncClient() as client:
-        #         resp = await client.post(
-        #             f"{API_URL}/admin_login",
-        #             json={"usuario": self.usuario, "password": self.password},
-        #             timeout=10.0,
-        #         )
-        #     if resp.status_code == 200:
-        #         self.logged_in = True
-        #         self.error = ""
-        #         self.cargando = False
-        #         yield rx.redirect("/admin_dashboard")
-        #     else:
-        #         self.error = "Usuario o contraseña incorrectos."
-        #         self.cargando = False
-        # except Exception:
-        #     self.error = "No se pudo conectar con el servidor. Intenta de nuevo."
-        #     self.cargando = False
- 
+            yield
  
 # ─────────────────────────────────────────────
 #  Componentes internos

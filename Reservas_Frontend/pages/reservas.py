@@ -1,160 +1,84 @@
-"""
-Página de Reservas — Chill Plans
-Ruta: /reservas
-
-Cómo funciona:
-- ReservaState: guarda todos los campos del formulario.
-- Cada rx.input tiene value=State.campo y on_change=State.set_campo.
-  Esto conecta el input con el State — lo que escribes se guarda automáticamente.
-- enviar_reserva: cuando el usuario hace click en "Confirmar", 
-  envía un POST a la API con los datos del formulario.
-- Por ahora el POST está comentado y solo muestra un mensaje de éxito.
-  Cuando tu compañero tenga la API lista, descomentas esa parte.
-"""
-
 import reflex as rx
+import httpx
 from Reservas_Frontend.components.navbar import navbar_buttons
 from Reservas_Frontend.components.footer import footer
-from Reservas_Frontend.mock_data import OFERTAS_MOCK
+from Reservas_Frontend.state import HomeState
 
-# URL de la API — cuando tu compañero la tenga lista, pon la URL aquí
-API_URL = "http://localhost:8000"
+# ── VARIABLE GLOBAL (FUERA DE LA CLASE) ──
+# Cambia esta IP por la de la máquina de tu compañero
+API_URL = "http://localhost:8000" 
+OFERTAS_MOCK = []
 
-
-# ─── STATE ────────────────────────────────────────────────────────────────────
-
+# ── 1. LA LÓGICA DEL ESTADO (DENTRO DE LA CLASE) ──
 class ReservaState(rx.State):
-    # Datos de contacto
     nombre: str = ""
     email: str = ""
     telefono: str = ""
-
-    # Detalles del viaje
-    destino_id: int = 1
-    destino_nombre: str = "Playa Rincón, Samaná"
     cantidad_personas: int = 1
     fecha_viaje: str = ""
+    metodo_pago: str = "Tarjeta"
+    
+    enviando: bool = False
+    exito: bool = False
+    mensaje: str = ""
 
-    # Pago
-    metodo_pago: str = "Transferencia bancaria"
+    @rx.var
+    def destino_id(self) -> int:
+        return HomeState.destino_id_seleccionado
 
-    # UI
-    enviando: bool = False          # para deshabilitar el botón mientras envía
-    mensaje: str = ""               # mensaje de éxito o error
-    exito: bool = False             # si fue exitoso o no
-    precio_total: float = 0.0      # se calcula según personas y destino
-
-    def set_nombre(self, v: str):
-        self.nombre = v
-
-    def set_email(self, v: str):
-        self.email = v
-
-    def set_telefono(self, v: str):
-        self.telefono = v
-
-    def set_fecha(self, v: str):
-        self.fecha_viaje = v
-
-    def set_personas(self, v: str):
-        """Convierte el string del input a número y recalcula el precio."""
-        try:
-            self.cantidad_personas = int(v)
-        except ValueError:
-            self.cantidad_personas = 1
-        self.calcular_precio()
-
-    def set_destino(self, nombre: str):
-        """Cuando cambia el destino, actualiza el ID y el precio."""
-        self.destino_nombre = nombre
-        for o in OFERTAS_MOCK:
-            if o["nombre"] == nombre:
-                self.destino_id = o["id"]
-                break
-        self.calcular_precio()
-
-    def set_metodo_pago(self, v: str):
-        self.metodo_pago = v
-
-    def calcular_precio(self):
-        """Calcula el precio total según destino y cantidad de personas."""
-        for o in OFERTAS_MOCK:
-            if o["id"] == self.destino_id:
-                self.precio_total = o["precio"] * self.cantidad_personas
-                break
+    def set_nombre(self, v: str): self.nombre = v; self.mensaje = ""
+    def set_email(self, v: str): self.email = v; self.mensaje = ""
+    def set_telefono(self, v: str): self.telefono = v; self.mensaje = ""
+    def set_personas(self, v: int): self.cantidad_personas = int(v)
+    def set_fecha(self, v: str): self.fecha_viaje = v; self.mensaje = ""
+    def set_pago(self, v: str): self.metodo_pago = v
 
     def validar(self) -> bool:
-        """Valida que los campos obligatorios estén llenos."""
-        if not self.nombre.strip():
-            self.mensaje = "Por favor escribe tu nombre completo."
+        if not self.nombre.strip() or not self.email.strip() or not self.telefono.strip() or not self.fecha_viaje.strip():
             self.exito = False
-            return False
-        if not self.email.strip() or "@" not in self.email:
-            self.mensaje = "Por favor escribe un email válido."
-            self.exito = False
-            return False
-        if not self.telefono.strip():
-            self.mensaje = "Por favor escribe tu teléfono."
-            self.exito = False
-            return False
-        if not self.fecha_viaje:
-            self.mensaje = "Por favor selecciona una fecha de viaje."
-            self.exito = False
+            self.mensaje = "Por favor, completa todos los campos del formulario."
             return False
         return True
 
     async def enviar_reserva(self):
-        """
-        Envía los datos del formulario a la API.
-        
-        Por ahora simula el envío con un mensaje de éxito.
-        Cuando la API esté lista, descomenta el bloque de httpx.
-        """
         if not self.validar():
             return
 
         self.enviando = True
         self.mensaje = ""
+        yield
 
-        # ── CUANDO LA API ESTÉ LISTA, DESCOMENTAR ESTO ──────────────────────
-        # import httpx
-        # try:
-        #     async with httpx.AsyncClient() as client:
-        #         response = await client.post(
-        #             f"{API_URL}/reservas",
-        #             json={
-        #                 "nombre_cliente": self.nombre,
-        #                 "email": self.email,
-        #                 "telefono": self.telefono,
-        #                 "oferta_id": self.destino_id,
-        #                 "cantidad_personas": self.cantidad_personas,
-        #                 "fecha_reserva": self.fecha_viaje,
-        #                 "metodo_pago": self.metodo_pago,
-        #             },
-        #             timeout=10.0,
-        #         )
-        #         if response.status_code == 200:
-        #             self.exito = True
-        #             self.mensaje = f"¡Reserva confirmada! Nos contactaremos a {self.email} pronto."
-        #             # Limpia el formulario
-        #             self.nombre = ""
-        #             self.email = ""
-        #             self.telefono = ""
-        #             self.fecha_viaje = ""
-        #         else:
-        #             self.exito = False
-        #             self.mensaje = "Hubo un problema al registrar tu reserva. Inténtalo de nuevo."
-        # except Exception:
-        #     self.exito = False
-        #     self.mensaje = "No pudimos conectar con el servidor. Inténtalo más tarde."
-        # ────────────────────────────────────────────────────────────────────
-
-        # SIMULACIÓN TEMPORAL (borra esto cuando conectes la API)
-        self.exito = True
-        self.mensaje = f"¡Reserva recibida! Te contactaremos a {self.email} en breve. ✓"
-        self.enviando = False
-
-
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{API_URL}/reservas",
+                    json={
+                        "nombre_cliente": self.nombre,
+                        "email": self.email,
+                        "telefono": self.telefono,
+                        "oferta_id": self.destino_id,
+                        "cantidad_personas": self.cantidad_personas,
+                        "fecha_reserva": self.fecha_viaje,
+                        "metodo_pago": self.metodo_pago,
+                    },
+                    timeout=10.0,
+                )
+                if response.status_code in [200, 201]:
+                    self.exito = True
+                    self.mensaje = f"¡Reserva confirmada exitosamente! Te contactaremos a {self.email}."
+                    self.nombre = ""
+                    self.email = ""
+                    self.telefono = ""
+                    self.fecha_viaje = ""
+                else:
+                    self.exito = False
+                    self.mensaje = "Error del servidor al procesar la reserva. Inténtalo de nuevo."
+        except Exception:
+            self.exito = False
+            self.mensaje = "No se pudo establecer conexión con el servidor de base de datos."
+        finally:
+            self.enviando = False
+            yield
 # ─── COMPONENTES ──────────────────────────────────────────────────────────────
 
 def seccion_titulo(titulo: str) -> rx.Component:
